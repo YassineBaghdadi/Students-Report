@@ -13,6 +13,9 @@
   <property name="windowTitle">
    <string>Form</string>
   </property>
+  <property name="layoutDirection">
+   <enum>Qt::LeftToRight</enum>
+  </property>
   <property name="styleSheet">
    <string notr="true">QFrame{border:0px;}</string>
   </property>
@@ -180,7 +183,7 @@
           </property>
           <layout class="QVBoxLayout" name="verticalLayout_5">
            <property name="leftMargin">
-            <number>21</number>
+            <number>0</number>
            </property>
            <property name="topMargin">
             <number>21</number>
@@ -208,101 +211,33 @@
                <property name="layoutDirection">
                 <enum>Qt::RightToLeft</enum>
                </property>
-               <row>
-                <property name="text">
-                 <string>Mechanical Production</string>
-                </property>
-               </row>
-               <row>
-                <property name="text">
-                 <string>Chemical production</string>
-                </property>
-               </row>
-               <row>
-                <property name="text">
-                 <string>Electrical machines and equuipemnt</string>
-                </property>
-               </row>
-               <column>
-                <property name="text">
-                 <string>2 Years</string>
-                </property>
-               </column>
-               <column>
-                <property name="text">
-                 <string>3 Years</string>
-                </property>
-               </column>
-               <column>
-                <property name="text">
-                 <string>4 Years</string>
-                </property>
-               </column>
-               <column>
-                <property name="text">
-                 <string>5 Years or more</string>
-                </property>
-               </column>
-               <item row="0" column="0">
-                <property name="text">
-                 <string>2000</string>
-                </property>
-               </item>
-               <item row="0" column="1">
-                <property name="text">
-                 <string>500</string>
-                </property>
-               </item>
-               <item row="0" column="2">
-                <property name="text">
-                 <string>20</string>
-                </property>
-               </item>
-               <item row="0" column="3">
-                <property name="text">
-                 <string>10</string>
-                </property>
-               </item>
-               <item row="1" column="0">
-                <property name="text">
-                 <string>2500</string>
-                </property>
-               </item>
-               <item row="1" column="1">
-                <property name="text">
-                 <string>30</string>
-                </property>
-               </item>
-               <item row="1" column="2">
-                <property name="text">
-                 <string>3</string>
-                </property>
-               </item>
-               <item row="1" column="3">
-                <property name="text">
-                 <string>6</string>
-                </property>
-               </item>
-               <item row="2" column="0">
-                <property name="text">
-                 <string>1000</string>
-                </property>
-               </item>
-               <item row="2" column="1">
-                <property name="text">
-                 <string>10</string>
-                </property>
-               </item>
-               <item row="2" column="2">
-                <property name="text">
-                 <string>3</string>
-                </property>
-               </item>
-               <item row="2" column="3">
-                <property name="text">
-                 <string>0</string>
-                </property>
-               </item>
+               <property name="autoScrollMargin">
+                <number>6</number>
+               </property>
+               <property name="editTriggers">
+                <set>QAbstractItemView::NoEditTriggers</set>
+               </property>
+               <property name="selectionMode">
+                <enum>QAbstractItemView::NoSelection</enum>
+               </property>
+               <property name="selectionBehavior">
+                <enum>QAbstractItemView::SelectRows</enum>
+               </property>
+               <property name="verticalScrollMode">
+                <enum>QAbstractItemView::ScrollPerPixel</enum>
+               </property>
+               <property name="horizontalScrollMode">
+                <enum>QAbstractItemView::ScrollPerPixel</enum>
+               </property>
+               <property name="sortingEnabled">
+                <bool>true</bool>
+               </property>
+               <attribute name="horizontalHeaderCascadingSectionResizes">
+                <bool>true</bool>
+               </attribute>
+               <attribute name="verticalHeaderVisible">
+                <bool>true</bool>
+               </attribute>
               </widget>
              </item>
             </layout>

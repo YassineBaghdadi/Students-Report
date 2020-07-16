@@ -11,7 +11,7 @@ import sys, os, random, threading
 import pandas as pd
 import logging
 
-from PyQt5.QtWidgets import QHeaderView
+from PyQt5.QtWidgets import QHeaderView, QTableWidgetItem
 
 
 class Main(QtWidgets.QWidget):
@@ -40,6 +40,18 @@ class Main(QtWidgets.QWidget):
         self.contents.addWidget(loading)
         self.df = pd.read_excel(self.file)
         print(self.df)
+
+        start_year = []
+        for i in self.df['Student ID']:
+            if str(i)[0] == '1':
+                start_year.append(int(f'14{str(i)[3:5]}'))
+            elif str(i)[0] == '4':
+                start_year.append(int(f'14{str(i)[1:3]}'))
+
+        self.df['start_year'] = start_year
+
+        self.df['year_in_college'] = self.df['Graduation Year'] - self.df['start_year']
+
         self.r1 =R1(self.df)
         self.clear_content()
         self.contents.addWidget(self.r1)
@@ -87,15 +99,90 @@ class R1(QtWidgets.QWidget):
         uic.loadUi(os.path.join(os.path.dirname(__file__), 'ui/r1.ui'), self)
         self.df = df
         # self.table.itemSelectionChanged.connect(self.table_select_event)
-        self.table_header = ['2 Years', '3 Years', '4 Years', '5 Years or more']
+        self.table.clear()
+        self.table_header = ['Majors', '2 Years', '3 Years', '4 Years', '5 Yrs or more']
         self.table.setColumnCount(len(self.table_header))
         self.table.setHorizontalHeaderLabels(self.table_header)
         self.table.resizeColumnsToContents()
+
         for i in range(len(self.table_header)):
             self.table.horizontalHeader().setSectionResizeMode(i, QHeaderView.Stretch)
 
+        majors = [i for i in set(list(self.df['Major']))]
+        gk = df.groupby('Major')
+        data = []
+        for major in majors:
+            _2y = 0
+            _3y = 0
+            _4y = 0
+            _5ym = 0
+            for yoc in gk.get_group(major)['year_in_college']:
+                if yoc == 2:
+                    _2y += 1
+                elif yoc == 3:
+                    _3y += 1
+                elif yoc == 4:
+                    _4y += 1
+                elif yoc >= 5:
+                    _5ym += 1
 
 
+
+            # data.append({major : [_2y, _3y, _4y, _5ym]})
+            data.append([major, _2y, _3y, _4y, _5ym])
+
+
+        # self.table.setRowCount(len(data))
+        #
+        # self.table.setVerticalHeaderLabels(list(data.keys()))
+
+        for r_n, r_d in enumerate(data):
+            self.table.insertRow(r_n)
+            for c_n, d in enumerate(r_d):
+                self.table.setItem(r_n, c_n, QtWidgets.QTableWidgetItem(str(d)))
+
+        # Graph(self.graph_layout)
+
+        set0 = QBarSet('2 years')
+        set1 = QBarSet('3 years')
+        set2 = QBarSet('4 years')
+        set3 = QBarSet('5 years or more')
+
+
+        set0.append([i[1] for i in data])
+        set1.append([i[2] for i in data])
+        set2.append([i[3] for i in data])
+        set3.append([i[4] for i in data])
+
+        series = QBarSeries()
+        series.append(set0)
+        series.append(set1)
+        series.append(set2)
+        series.append(set3)
+
+        chart = QChart()
+        chart.addSeries(series)
+        chart.setTitle('Bar Chart Demo')
+        chart.setAnimationOptions(QChart.SeriesAnimations)
+
+        axisX = QBarCategoryAxis()
+        axisX.append(str(i) for i in range(1, len(data)+1))
+
+        all_v = []
+        for i in data:
+            for x in i[1:]:
+                all_v.append(x)
+        axisY = QValueAxis()
+        axisY.setRange(0, max(all_v))
+
+        chart.addAxis(axisX, Qt.AlignBottom)
+        chart.addAxis(axisY, Qt.AlignLeft)
+
+        chart.legend().setVisible(True)
+        chart.legend().setAlignment(Qt.AlignBottom)
+
+        chartView = QChartView(chart)
+        self.graph_layout.addWidget(chartView)
 
 class Loading(QtWidgets.QWidget):
     def __init__(self, gif = 'loading.gif'):
