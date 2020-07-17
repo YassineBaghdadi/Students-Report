@@ -47,7 +47,7 @@ class Main(QtWidgets.QWidget):
             if o is self.r1_btn and self.current_R != 1:
                 self.clicks_btns(self.r1_btn)
                 self.current_R = 1
-                self.contents.addWidget(self.r1)
+                self.contents.addWidget(self.r1_)
 
             elif o is self.r2_btn and self.current_R != 2:
                 #todo load R2
@@ -93,10 +93,11 @@ class Main(QtWidgets.QWidget):
                         'Semester for graduation', 'GPA', 'Grade', 'Type of certificate']
             if len(self.df.columns) != 13:
                 notification.notify(title='Error found while looading', message='make sure you are using the right file', timeout=7)
+                self.clear_content()
                 self.contents.addWidget(Loading('err.gif'))
                 return
 
-            print(self.df)
+            # print(self.df)
 
             start_year = []
             for i in self.df['Student ID']:
@@ -108,9 +109,9 @@ class Main(QtWidgets.QWidget):
             self.df['start_year'] = start_year
 
             self.df['year_in_college'] = self.df['Graduation Year'] - self.df['start_year']
-
-            self.r1 =R1(self.df)
-            self.contents.addWidget(self.r1)
+            self.clear_content()
+            self.r1_ =R1(self.df)
+            self.contents.addWidget(self.r1_)
             self.frame_2.setEnabled(True)
             self.clicks_btns(self.r1_btn)
             self.current_R = 1
@@ -128,7 +129,7 @@ class Main(QtWidgets.QWidget):
         self.r5_btn.setStyleSheet('QPushButton{background-color:white;}')
         self.r6_btn.setStyleSheet('QPushButton{background-color:white;}')
         btn.setStyleSheet('QPushButton{background-color:#e6ffe6;}')
-        self.clear_content()
+
 
 
 
@@ -248,7 +249,7 @@ class R1(QtWidgets.QWidget):
 
                 # data.append({major : [_2y, _3y, _4y, _5ym]})
                 data.append([major, _2y, _3y, _4y, _5ym])
-            [print(i) for i in data]
+            # [print(i) for i in data]
             [self.table.removeRow(0) for _ in range(self.table.rowCount())]
             for r_n, r_d in enumerate(data):
                 self.table.insertRow(r_n)
@@ -315,26 +316,27 @@ class R1(QtWidgets.QWidget):
                 self.verticalLayout_3.itemAt(i).widget().setParent(None)
             self.verticalLayout_3.addWidget(lbl)
 
-class R2(QtWidgets.QWidget):
-    def __init__(self, df = None):
-        super().__init__()
-        uic.loadUi(os.path.join(os.path.dirname(__file__), 'ui/r2.ui'), self)
-        self.df = df
-        # self.table.itemSelectionChanged.connect(self.table_select_event)
-        self.table.clear()
-        self.table.setColumnCount(len(self.table_header))
-        self.table.resizeColumnsToContents()
-        self.from_txt.setValidator(QIntValidator())
-        self.to_txt.setValidator(QIntValidator())
-        for i in range(len(self.table_header)):
-            self.table.horizontalHeader().setSectionResizeMode(i, QHeaderView.Stretch)
-
-        self.set_dt()
-        self.filter.clicked.connect(self.filtering)
-        self.produce.clicked.connect(self.export_to_exel)
-
-    def set_dt(self):
-        # self.table.setHorizontalHeaderLabels(self.table_header)
+# class R2(QtWidgets.QWidget):
+#     def __init__(self, df = None):
+#         super().__init__()
+#         uic.loadUi(os.path.join(os.path.dirname(__file__), 'ui/r2.ui'), self)
+#         self.df = df
+#         # self.table.itemSelectionChanged.connect(self.table_select_event)
+#         self.table.clear()
+#         self.table.setColumnCount(len(self.table_header))
+#         self.table.resizeColumnsToContents()
+#         self.from_txt.setValidator(QIntValidator())
+#         self.to_txt.setValidator(QIntValidator())
+#         for i in range(len(self.table_header)):
+#             self.table.horizontalHeader().setSectionResizeMode(i, QHeaderView.Stretch)
+#
+#         self.set_dt()
+#         self.filter.clicked.connect(self.filtering)
+#         self.produce.clicked.connect(self.export_to_exel)
+#
+#     def set_dt(self):
+#         pass
+#         # self.table.setHorizontalHeaderLabels(self.table_header)
 
 
 
