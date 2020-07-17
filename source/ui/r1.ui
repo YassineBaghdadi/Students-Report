@@ -33,6 +33,16 @@
     <number>3</number>
    </property>
    <item>
+    <widget class="QLabel" name="err">
+     <property name="text">
+      <string/>
+     </property>
+     <property name="alignment">
+      <set>Qt::AlignCenter</set>
+     </property>
+    </widget>
+   </item>
+   <item>
     <widget class="QFrame" name="frame">
      <property name="maximumSize">
       <size>
@@ -77,7 +87,7 @@
        </widget>
       </item>
       <item>
-       <widget class="QLineEdit" name="from">
+       <widget class="QLineEdit" name="from_txt">
         <property name="maximumSize">
          <size>
           <width>120</width>
@@ -86,6 +96,9 @@
         </property>
         <property name="placeholderText">
          <string>Year</string>
+        </property>
+        <property name="clearButtonEnabled">
+         <bool>true</bool>
         </property>
        </widget>
       </item>
@@ -103,7 +116,7 @@
        </widget>
       </item>
       <item>
-       <widget class="QLineEdit" name="to">
+       <widget class="QLineEdit" name="to_txt">
         <property name="maximumSize">
          <size>
           <width>120</width>
@@ -113,10 +126,29 @@
         <property name="placeholderText">
          <string>Year</string>
         </property>
+        <property name="clearButtonEnabled">
+         <bool>true</bool>
+        </property>
        </widget>
       </item>
       <item>
-       <widget class="QPushButton" name="pushButton_2">
+       <spacer name="horizontalSpacer_4">
+        <property name="orientation">
+         <enum>Qt::Horizontal</enum>
+        </property>
+        <property name="sizeType">
+         <enum>QSizePolicy::Preferred</enum>
+        </property>
+        <property name="sizeHint" stdset="0">
+         <size>
+          <width>40</width>
+          <height>20</height>
+         </size>
+        </property>
+       </spacer>
+      </item>
+      <item>
+       <widget class="QPushButton" name="filter">
         <property name="minimumSize">
          <size>
           <width>120</width>
@@ -124,7 +156,7 @@
          </size>
         </property>
         <property name="styleSheet">
-         <string notr="true">margin-left:20px;</string>
+         <string notr="true"/>
         </property>
         <property name="text">
          <string>Filter</string>
@@ -148,54 +180,55 @@
     </widget>
    </item>
    <item>
-    <widget class="QFrame" name="frame_2">
+    <widget class="QFrame" name="frame_6">
+     <property name="minimumSize">
+      <size>
+       <width>0</width>
+       <height>55</height>
+      </size>
+     </property>
      <property name="frameShape">
       <enum>QFrame::StyledPanel</enum>
      </property>
      <property name="frameShadow">
       <enum>QFrame::Raised</enum>
      </property>
-     <layout class="QVBoxLayout" name="verticalLayout">
+     <layout class="QVBoxLayout" name="verticalLayout_6">
+      <property name="leftMargin">
+       <number>0</number>
+      </property>
+      <property name="topMargin">
+       <number>0</number>
+      </property>
+      <property name="rightMargin">
+       <number>0</number>
+      </property>
+      <property name="bottomMargin">
+       <number>0</number>
+      </property>
       <item>
-       <layout class="QHBoxLayout" name="horizontalLayout_2" stretch="1,1">
+       <layout class="QVBoxLayout" name="verticalLayout_3">
         <item>
-         <widget class="QFrame" name="frame_5">
+         <widget class="QFrame" name="frame_2">
           <property name="frameShape">
            <enum>QFrame::StyledPanel</enum>
           </property>
           <property name="frameShadow">
            <enum>QFrame::Raised</enum>
           </property>
-          <layout class="QVBoxLayout" name="verticalLayout_7">
+          <layout class="QVBoxLayout" name="verticalLayout">
            <item>
-            <layout class="QVBoxLayout" name="graph_layout"/>
-           </item>
-          </layout>
-         </widget>
-        </item>
-        <item>
-         <widget class="QFrame" name="frame_3">
-          <property name="frameShape">
-           <enum>QFrame::StyledPanel</enum>
-          </property>
-          <property name="frameShadow">
-           <enum>QFrame::Raised</enum>
-          </property>
-          <layout class="QVBoxLayout" name="verticalLayout_5">
-           <property name="leftMargin">
-            <number>0</number>
-           </property>
-           <property name="topMargin">
-            <number>21</number>
-           </property>
-           <property name="rightMargin">
-            <number>21</number>
-           </property>
-           <property name="bottomMargin">
-            <number>21</number>
-           </property>
-           <item>
-            <widget class="QLabel" name="table_title">
+            <widget class="QLabel" name="title_">
+             <property name="font">
+              <font>
+               <family>Noto Sans CJK SC</family>
+               <pointsize>12</pointsize>
+               <weight>75</weight>
+               <italic>true</italic>
+               <bold>true</bold>
+               <underline>true</underline>
+              </font>
+             </property>
              <property name="text">
               <string>title</string>
              </property>
@@ -205,95 +238,778 @@
             </widget>
            </item>
            <item>
-            <layout class="QVBoxLayout" name="verticalLayout_4">
+            <layout class="QHBoxLayout" name="horizontalLayout_2" stretch="1,1">
              <item>
-              <widget class="QTableWidget" name="table">
-               <property name="layoutDirection">
-                <enum>Qt::RightToLeft</enum>
+              <widget class="QFrame" name="frame_5">
+               <property name="frameShape">
+                <enum>QFrame::StyledPanel</enum>
                </property>
-               <property name="autoScrollMargin">
-                <number>6</number>
+               <property name="frameShadow">
+                <enum>QFrame::Raised</enum>
                </property>
-               <property name="editTriggers">
-                <set>QAbstractItemView::NoEditTriggers</set>
+               <layout class="QVBoxLayout" name="verticalLayout_7">
+                <property name="leftMargin">
+                 <number>0</number>
+                </property>
+                <property name="topMargin">
+                 <number>0</number>
+                </property>
+                <property name="rightMargin">
+                 <number>0</number>
+                </property>
+                <property name="bottomMargin">
+                 <number>0</number>
+                </property>
+                <item>
+                 <layout class="QVBoxLayout" name="graph_layout"/>
+                </item>
+               </layout>
+              </widget>
+             </item>
+             <item>
+              <widget class="QFrame" name="frame_3">
+               <property name="frameShape">
+                <enum>QFrame::StyledPanel</enum>
                </property>
-               <property name="selectionMode">
-                <enum>QAbstractItemView::NoSelection</enum>
+               <property name="frameShadow">
+                <enum>QFrame::Raised</enum>
                </property>
-               <property name="selectionBehavior">
-                <enum>QAbstractItemView::SelectRows</enum>
-               </property>
-               <property name="verticalScrollMode">
-                <enum>QAbstractItemView::ScrollPerPixel</enum>
-               </property>
-               <property name="horizontalScrollMode">
-                <enum>QAbstractItemView::ScrollPerPixel</enum>
-               </property>
-               <property name="sortingEnabled">
-                <bool>true</bool>
-               </property>
-               <attribute name="horizontalHeaderCascadingSectionResizes">
-                <bool>true</bool>
-               </attribute>
-               <attribute name="verticalHeaderVisible">
-                <bool>true</bool>
-               </attribute>
+               <layout class="QVBoxLayout" name="verticalLayout_5">
+                <property name="leftMargin">
+                 <number>0</number>
+                </property>
+                <property name="topMargin">
+                 <number>10</number>
+                </property>
+                <property name="rightMargin">
+                 <number>0</number>
+                </property>
+                <property name="bottomMargin">
+                 <number>0</number>
+                </property>
+                <item>
+                 <layout class="QVBoxLayout" name="verticalLayout_4">
+                  <item>
+                   <widget class="QTableWidget" name="table">
+                    <property name="layoutDirection">
+                     <enum>Qt::RightToLeft</enum>
+                    </property>
+                    <property name="frameShape">
+                     <enum>QFrame::StyledPanel</enum>
+                    </property>
+                    <property name="frameShadow">
+                     <enum>QFrame::Sunken</enum>
+                    </property>
+                    <property name="sizeAdjustPolicy">
+                     <enum>QAbstractScrollArea::AdjustToContents</enum>
+                    </property>
+                    <property name="autoScrollMargin">
+                     <number>2</number>
+                    </property>
+                    <property name="editTriggers">
+                     <set>QAbstractItemView::NoEditTriggers</set>
+                    </property>
+                    <property name="dragEnabled">
+                     <bool>true</bool>
+                    </property>
+                    <property name="alternatingRowColors">
+                     <bool>true</bool>
+                    </property>
+                    <property name="selectionMode">
+                     <enum>QAbstractItemView::NoSelection</enum>
+                    </property>
+                    <property name="selectionBehavior">
+                     <enum>QAbstractItemView::SelectRows</enum>
+                    </property>
+                    <property name="textElideMode">
+                     <enum>Qt::ElideLeft</enum>
+                    </property>
+                    <property name="verticalScrollMode">
+                     <enum>QAbstractItemView::ScrollPerPixel</enum>
+                    </property>
+                    <property name="horizontalScrollMode">
+                     <enum>QAbstractItemView::ScrollPerPixel</enum>
+                    </property>
+                    <property name="showGrid">
+                     <bool>true</bool>
+                    </property>
+                    <property name="gridStyle">
+                     <enum>Qt::DashDotLine</enum>
+                    </property>
+                    <property name="sortingEnabled">
+                     <bool>true</bool>
+                    </property>
+                    <property name="cornerButtonEnabled">
+                     <bool>true</bool>
+                    </property>
+                    <attribute name="horizontalHeaderVisible">
+                     <bool>true</bool>
+                    </attribute>
+                    <attribute name="horizontalHeaderCascadingSectionResizes">
+                     <bool>true</bool>
+                    </attribute>
+                    <attribute name="horizontalHeaderStretchLastSection">
+                     <bool>true</bool>
+                    </attribute>
+                    <attribute name="verticalHeaderVisible">
+                     <bool>true</bool>
+                    </attribute>
+                    <row>
+                     <property name="text">
+                      <string>New Row</string>
+                     </property>
+                    </row>
+                    <row>
+                     <property name="text">
+                      <string>New Row</string>
+                     </property>
+                    </row>
+                    <row>
+                     <property name="text">
+                      <string>New Row</string>
+                     </property>
+                    </row>
+                    <row>
+                     <property name="text">
+                      <string>New Row</string>
+                     </property>
+                    </row>
+                    <row>
+                     <property name="text">
+                      <string>New Row</string>
+                     </property>
+                    </row>
+                    <row>
+                     <property name="text">
+                      <string>New Row</string>
+                     </property>
+                    </row>
+                    <row>
+                     <property name="text">
+                      <string>New Row</string>
+                     </property>
+                    </row>
+                    <row>
+                     <property name="text">
+                      <string>New Row</string>
+                     </property>
+                    </row>
+                    <row>
+                     <property name="text">
+                      <string>New Row</string>
+                     </property>
+                    </row>
+                    <column>
+                     <property name="text">
+                      <string>New Column</string>
+                     </property>
+                    </column>
+                    <column>
+                     <property name="text">
+                      <string>New Column</string>
+                     </property>
+                    </column>
+                    <column>
+                     <property name="text">
+                      <string>New Column</string>
+                     </property>
+                    </column>
+                    <column>
+                     <property name="text">
+                      <string>New Column</string>
+                     </property>
+                    </column>
+                    <column>
+                     <property name="text">
+                      <string>New Column</string>
+                     </property>
+                    </column>
+                    <column>
+                     <property name="text">
+                      <string>New Column</string>
+                     </property>
+                    </column>
+                    <column>
+                     <property name="text">
+                      <string>New Column</string>
+                     </property>
+                    </column>
+                    <column>
+                     <property name="text">
+                      <string>New Column</string>
+                     </property>
+                    </column>
+                    <column>
+                     <property name="text">
+                      <string>New Column</string>
+                     </property>
+                    </column>
+                    <column>
+                     <property name="text">
+                      <string>New Column</string>
+                     </property>
+                    </column>
+                    <column>
+                     <property name="text">
+                      <string>New Column</string>
+                     </property>
+                    </column>
+                    <item row="0" column="0">
+                     <property name="text">
+                      <string>bvc</string>
+                     </property>
+                    </item>
+                    <item row="0" column="1">
+                     <property name="text">
+                      <string>bvc</string>
+                     </property>
+                    </item>
+                    <item row="0" column="2">
+                     <property name="text">
+                      <string>bvc</string>
+                     </property>
+                    </item>
+                    <item row="0" column="3">
+                     <property name="text">
+                      <string>bvc</string>
+                     </property>
+                    </item>
+                    <item row="0" column="4">
+                     <property name="text">
+                      <string>bvc</string>
+                     </property>
+                    </item>
+                    <item row="0" column="5">
+                     <property name="text">
+                      <string>bvc</string>
+                     </property>
+                    </item>
+                    <item row="0" column="6">
+                     <property name="text">
+                      <string>bvc</string>
+                     </property>
+                    </item>
+                    <item row="0" column="7">
+                     <property name="text">
+                      <string>jhg</string>
+                     </property>
+                    </item>
+                    <item row="0" column="8">
+                     <property name="text">
+                      <string>jhg</string>
+                     </property>
+                    </item>
+                    <item row="0" column="9">
+                     <property name="text">
+                      <string>jhg</string>
+                     </property>
+                    </item>
+                    <item row="0" column="10">
+                     <property name="text">
+                      <string>y</string>
+                     </property>
+                    </item>
+                    <item row="1" column="0">
+                     <property name="text">
+                      <string>g</string>
+                     </property>
+                    </item>
+                    <item row="1" column="1">
+                     <property name="text">
+                      <string>y</string>
+                     </property>
+                    </item>
+                    <item row="1" column="2">
+                     <property name="text">
+                      <string>jhn</string>
+                     </property>
+                    </item>
+                    <item row="1" column="3">
+                     <property name="text">
+                      <string>uy</string>
+                     </property>
+                    </item>
+                    <item row="1" column="4">
+                     <property name="text">
+                      <string>uy</string>
+                     </property>
+                    </item>
+                    <item row="1" column="5">
+                     <property name="text">
+                      <string>uy</string>
+                     </property>
+                    </item>
+                    <item row="1" column="6">
+                     <property name="text">
+                      <string>uy</string>
+                     </property>
+                    </item>
+                    <item row="1" column="7">
+                     <property name="text">
+                      <string>uyt</string>
+                     </property>
+                    </item>
+                    <item row="1" column="8">
+                     <property name="text">
+                      <string>uyt</string>
+                     </property>
+                    </item>
+                    <item row="1" column="9">
+                     <property name="text">
+                      <string>uyt</string>
+                     </property>
+                    </item>
+                    <item row="1" column="10">
+                     <property name="text">
+                      <string>uyt</string>
+                     </property>
+                    </item>
+                    <item row="2" column="0">
+                     <property name="text">
+                      <string>uyt</string>
+                     </property>
+                    </item>
+                    <item row="2" column="1">
+                     <property name="text">
+                      <string>uy</string>
+                     </property>
+                    </item>
+                    <item row="2" column="2">
+                     <property name="text">
+                      <string>uyt</string>
+                     </property>
+                    </item>
+                    <item row="2" column="3">
+                     <property name="text">
+                      <string>uyt</string>
+                     </property>
+                    </item>
+                    <item row="2" column="4">
+                     <property name="text">
+                      <string>uyt</string>
+                     </property>
+                    </item>
+                    <item row="2" column="5">
+                     <property name="text">
+                      <string>iuy</string>
+                     </property>
+                    </item>
+                    <item row="2" column="6">
+                     <property name="text">
+                      <string>iou</string>
+                     </property>
+                    </item>
+                    <item row="2" column="7">
+                     <property name="text">
+                      <string>ykujh</string>
+                     </property>
+                    </item>
+                    <item row="2" column="8">
+                     <property name="text">
+                      <string>j</string>
+                     </property>
+                    </item>
+                    <item row="2" column="9">
+                     <property name="text">
+                      <string>mn</string>
+                     </property>
+                    </item>
+                    <item row="2" column="10">
+                     <property name="text">
+                      <string>jh</string>
+                     </property>
+                    </item>
+                    <item row="3" column="0">
+                     <property name="text">
+                      <string>jh</string>
+                     </property>
+                    </item>
+                    <item row="3" column="1">
+                     <property name="text">
+                      <string>gj</string>
+                     </property>
+                    </item>
+                    <item row="3" column="2">
+                     <property name="text">
+                      <string>hgj</string>
+                     </property>
+                    </item>
+                    <item row="3" column="3">
+                     <property name="text">
+                      <string>h</string>
+                     </property>
+                    </item>
+                    <item row="3" column="4">
+                     <property name="text">
+                      <string>gjh</string>
+                     </property>
+                    </item>
+                    <item row="3" column="5">
+                     <property name="text">
+                      <string>ui</string>
+                     </property>
+                    </item>
+                    <item row="3" column="6">
+                     <property name="text">
+                      <string>iu</string>
+                     </property>
+                    </item>
+                    <item row="3" column="7">
+                     <property name="text">
+                      <string>uoi</string>
+                     </property>
+                    </item>
+                    <item row="3" column="8">
+                     <property name="text">
+                      <string>oi</string>
+                     </property>
+                    </item>
+                    <item row="3" column="9">
+                     <property name="text">
+                      <string>ihu</string>
+                     </property>
+                    </item>
+                    <item row="3" column="10">
+                     <property name="text">
+                      <string>hg</string>
+                     </property>
+                    </item>
+                    <item row="4" column="0">
+                     <property name="text">
+                      <string>ubjh</string>
+                     </property>
+                    </item>
+                    <item row="4" column="1">
+                     <property name="text">
+                      <string>vjh</string>
+                     </property>
+                    </item>
+                    <item row="4" column="2">
+                     <property name="text">
+                      <string>vj</string>
+                     </property>
+                    </item>
+                    <item row="4" column="3">
+                     <property name="text">
+                      <string>vjh</string>
+                     </property>
+                    </item>
+                    <item row="4" column="4">
+                     <property name="text">
+                      <string>vjh</string>
+                     </property>
+                    </item>
+                    <item row="4" column="5">
+                     <property name="text">
+                      <string>gjh</string>
+                     </property>
+                    </item>
+                    <item row="4" column="6">
+                     <property name="text">
+                      <string>jh</string>
+                     </property>
+                    </item>
+                    <item row="4" column="7">
+                     <property name="text">
+                      <string>jh</string>
+                     </property>
+                    </item>
+                    <item row="4" column="8">
+                     <property name="text">
+                      <string>jhg</string>
+                     </property>
+                    </item>
+                    <item row="4" column="9">
+                     <property name="text">
+                      <string>jhg</string>
+                     </property>
+                    </item>
+                    <item row="4" column="10">
+                     <property name="text">
+                      <string>jhj</string>
+                     </property>
+                    </item>
+                    <item row="5" column="0">
+                     <property name="text">
+                      <string>hj</string>
+                     </property>
+                    </item>
+                    <item row="5" column="1">
+                     <property name="text">
+                      <string>hg</string>
+                     </property>
+                    </item>
+                    <item row="5" column="2">
+                     <property name="text">
+                      <string>jhg</string>
+                     </property>
+                    </item>
+                    <item row="5" column="3">
+                     <property name="text">
+                      <string>jhg</string>
+                     </property>
+                    </item>
+                    <item row="5" column="4">
+                     <property name="text">
+                      <string>jhg</string>
+                     </property>
+                    </item>
+                    <item row="5" column="5">
+                     <property name="text">
+                      <string>jhg</string>
+                     </property>
+                    </item>
+                    <item row="5" column="6">
+                     <property name="text">
+                      <string>jhg</string>
+                     </property>
+                    </item>
+                    <item row="5" column="7">
+                     <property name="text">
+                      <string>jhg</string>
+                     </property>
+                    </item>
+                    <item row="5" column="8">
+                     <property name="text">
+                      <string>jhg</string>
+                     </property>
+                    </item>
+                    <item row="5" column="9">
+                     <property name="text">
+                      <string>jk</string>
+                     </property>
+                    </item>
+                    <item row="5" column="10">
+                     <property name="text">
+                      <string>kj</string>
+                     </property>
+                    </item>
+                    <item row="6" column="0">
+                     <property name="text">
+                      <string>kj</string>
+                     </property>
+                    </item>
+                    <item row="6" column="1">
+                     <property name="text">
+                      <string>jhg</string>
+                     </property>
+                    </item>
+                    <item row="6" column="2">
+                     <property name="text">
+                      <string>hg</string>
+                     </property>
+                    </item>
+                    <item row="6" column="3">
+                     <property name="text">
+                      <string>jhg</string>
+                     </property>
+                    </item>
+                    <item row="6" column="4">
+                     <property name="text">
+                      <string>jhg</string>
+                     </property>
+                    </item>
+                    <item row="6" column="5">
+                     <property name="text">
+                      <string>hg</string>
+                     </property>
+                    </item>
+                    <item row="6" column="6">
+                     <property name="text">
+                      <string>b</string>
+                     </property>
+                    </item>
+                    <item row="6" column="7">
+                     <property name="text">
+                      <string>bn</string>
+                     </property>
+                    </item>
+                    <item row="6" column="8">
+                     <property name="text">
+                      <string>ngv</string>
+                     </property>
+                    </item>
+                    <item row="6" column="9">
+                     <property name="text">
+                      <string>hgf</string>
+                     </property>
+                    </item>
+                    <item row="6" column="10">
+                     <property name="text">
+                      <string>hgf</string>
+                     </property>
+                    </item>
+                    <item row="7" column="0">
+                     <property name="text">
+                      <string>hgf</string>
+                     </property>
+                    </item>
+                    <item row="7" column="1">
+                     <property name="text">
+                      <string>hgf</string>
+                     </property>
+                    </item>
+                    <item row="7" column="2">
+                     <property name="text">
+                      <string>hgf</string>
+                     </property>
+                    </item>
+                    <item row="7" column="3">
+                     <property name="text">
+                      <string>hgf</string>
+                     </property>
+                    </item>
+                    <item row="7" column="4">
+                     <property name="text">
+                      <string>hgf</string>
+                     </property>
+                    </item>
+                    <item row="7" column="5">
+                     <property name="text">
+                      <string>hgf</string>
+                     </property>
+                    </item>
+                    <item row="7" column="6">
+                     <property name="text">
+                      <string>hgf</string>
+                     </property>
+                    </item>
+                    <item row="7" column="7">
+                     <property name="text">
+                      <string>hgf</string>
+                     </property>
+                    </item>
+                    <item row="7" column="8">
+                     <property name="text">
+                      <string>hgf</string>
+                     </property>
+                    </item>
+                    <item row="7" column="9">
+                     <property name="text">
+                      <string>hgf</string>
+                     </property>
+                    </item>
+                    <item row="7" column="10">
+                     <property name="text">
+                      <string>hgf</string>
+                     </property>
+                    </item>
+                    <item row="8" column="0">
+                     <property name="text">
+                      <string>hgf</string>
+                     </property>
+                    </item>
+                    <item row="8" column="1">
+                     <property name="text">
+                      <string>hgf</string>
+                     </property>
+                    </item>
+                    <item row="8" column="2">
+                     <property name="text">
+                      <string>hgf</string>
+                     </property>
+                    </item>
+                    <item row="8" column="3">
+                     <property name="text">
+                      <string>hgf</string>
+                     </property>
+                    </item>
+                    <item row="8" column="4">
+                     <property name="text">
+                      <string>hgf</string>
+                     </property>
+                    </item>
+                    <item row="8" column="5">
+                     <property name="text">
+                      <string>vb</string>
+                     </property>
+                    </item>
+                    <item row="8" column="6">
+                     <property name="text">
+                      <string>bvc</string>
+                     </property>
+                    </item>
+                    <item row="8" column="7">
+                     <property name="text">
+                      <string>bvc</string>
+                     </property>
+                    </item>
+                    <item row="8" column="8">
+                     <property name="text">
+                      <string>bvc</string>
+                     </property>
+                    </item>
+                    <item row="8" column="9">
+                     <property name="text">
+                      <string>bvc</string>
+                     </property>
+                    </item>
+                    <item row="8" column="10">
+                     <property name="text">
+                      <string>bvc</string>
+                     </property>
+                    </item>
+                   </widget>
+                  </item>
+                 </layout>
+                </item>
+               </layout>
               </widget>
              </item>
             </layout>
+           </item>
+           <item>
+            <widget class="QFrame" name="frame_4">
+             <property name="minimumSize">
+              <size>
+               <width>0</width>
+               <height>47</height>
+              </size>
+             </property>
+             <property name="frameShape">
+              <enum>QFrame::StyledPanel</enum>
+             </property>
+             <property name="frameShadow">
+              <enum>QFrame::Raised</enum>
+             </property>
+             <layout class="QHBoxLayout" name="horizontalLayout_4">
+              <item>
+               <layout class="QHBoxLayout" name="horizontalLayout_3">
+                <item>
+                 <spacer name="horizontalSpacer_3">
+                  <property name="orientation">
+                   <enum>Qt::Horizontal</enum>
+                  </property>
+                  <property name="sizeHint" stdset="0">
+                   <size>
+                    <width>40</width>
+                    <height>20</height>
+                   </size>
+                  </property>
+                 </spacer>
+                </item>
+                <item>
+                 <widget class="QPushButton" name="pushButton">
+                  <property name="minimumSize">
+                   <size>
+                    <width>133</width>
+                    <height>37</height>
+                   </size>
+                  </property>
+                  <property name="text">
+                   <string>Produce</string>
+                  </property>
+                 </widget>
+                </item>
+               </layout>
+              </item>
+             </layout>
+            </widget>
            </item>
           </layout>
          </widget>
         </item>
        </layout>
-      </item>
-      <item>
-       <widget class="QFrame" name="frame_4">
-        <property name="minimumSize">
-         <size>
-          <width>0</width>
-          <height>47</height>
-         </size>
-        </property>
-        <property name="frameShape">
-         <enum>QFrame::StyledPanel</enum>
-        </property>
-        <property name="frameShadow">
-         <enum>QFrame::Raised</enum>
-        </property>
-        <layout class="QHBoxLayout" name="horizontalLayout_4">
-         <item>
-          <layout class="QHBoxLayout" name="horizontalLayout_3">
-           <item>
-            <spacer name="horizontalSpacer_3">
-             <property name="orientation">
-              <enum>Qt::Horizontal</enum>
-             </property>
-             <property name="sizeHint" stdset="0">
-              <size>
-               <width>40</width>
-               <height>20</height>
-              </size>
-             </property>
-            </spacer>
-           </item>
-           <item>
-            <widget class="QPushButton" name="pushButton">
-             <property name="minimumSize">
-              <size>
-               <width>133</width>
-               <height>37</height>
-              </size>
-             </property>
-             <property name="text">
-              <string>Produce</string>
-             </property>
-            </widget>
-           </item>
-          </layout>
-         </item>
-        </layout>
-       </widget>
       </item>
      </layout>
     </widget>
