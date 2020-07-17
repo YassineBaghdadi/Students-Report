@@ -42,40 +42,6 @@ class Main(QtWidgets.QWidget):
         self.r5_btn.installEventFilter(self)
         self.r6_btn.installEventFilter(self)
 
-    def eventFilter(self, o, e):
-        if e.type() == QtCore.QEvent.MouseButtonPress or e.type() == QtCore.QEvent.MouseButtonDblClick:
-            if o is self.r1_btn and self.current_R != 1:
-                self.clicks_btns(self.r1_btn)
-                self.current_R = 1
-                self.contents.addWidget(self.r1_)
-
-            elif o is self.r2_btn and self.current_R != 2:
-                #todo load R2
-                self.clicks_btns(self.r2_btn)
-                self.current_R = 2
-
-            elif o is self.r3_btn and self.current_R != 3:
-                # todo load R3
-                self.clicks_btns(self.r3_btn)
-                self.current_R = 3
-
-            elif o is self.r4_btn and self.current_R != 4:
-                # todo load R4
-                self.clicks_btns(self.r4_btn)
-                self.current_R = 4
-
-            elif o is self.r5_btn and self.current_R != 5:
-                # todo load R5
-                self.clicks_btns(self.r5_btn)
-                self.current_R = 5
-
-            elif o is self.r6_btn and self.current_R != 6:
-                # todo load R6
-                self.clicks_btns(self.r6_btn)
-                self.current_R = 6
-
-        return super(Main, self).eventFilter(o, e)
-
     def change_widget(self, wdget):
         self.clear_content()
         self.contents.addWidget(wdget)
@@ -110,14 +76,56 @@ class Main(QtWidgets.QWidget):
 
             self.df['year_in_college'] = self.df['Graduation Year'] - self.df['start_year']
             self.clear_content()
-            self.r1_ =R1(self.df)
-            self.contents.addWidget(self.r1_)
+            self.r1 =R1(self.df)
+            self.contents.addWidget(self.r1)
             self.frame_2.setEnabled(True)
             self.clicks_btns(self.r1_btn)
             self.current_R = 1
             self.current_F = self.path_txt.currentText()
             ########################################################### R2
 
+            self.r2 = R2(self.df)
+
+
+    def eventFilter(self, o, e):
+        if e.type() == QtCore.QEvent.MouseButtonPress or e.type() == QtCore.QEvent.MouseButtonDblClick:
+            if o is self.r1_btn and self.current_R != 1:
+                self.clicks_btns(self.r1_btn)
+                self.current_R = 1
+                self.clear_content()
+                self.contents.addWidget(self.r1)
+
+            elif o is self.r2_btn and self.current_R != 2:
+                self.clicks_btns(self.r2_btn)
+                self.current_R = 2
+                self.clear_content()
+                self.contents.addWidget(self.r2)
+
+            elif o is self.r3_btn and self.current_R != 3:
+                # todo load R3
+                self.clicks_btns(self.r3_btn)
+                self.current_R = 3
+                self.clear_content()
+
+            elif o is self.r4_btn and self.current_R != 4:
+                # todo load R4
+                self.clicks_btns(self.r4_btn)
+                self.current_R = 4
+                self.clear_content()
+
+            elif o is self.r5_btn and self.current_R != 5:
+                # todo load R5
+                self.clicks_btns(self.r5_btn)
+                self.current_R = 5
+                self.clear_content()
+
+            elif o is self.r6_btn and self.current_R != 6:
+                # todo load R6
+                self.clicks_btns(self.r6_btn)
+                self.current_R = 6
+                self.clear_content()
+
+        return super(Main, self).eventFilter(o, e)
 
 
 
@@ -206,8 +214,7 @@ class R1(QtWidgets.QWidget):
                         pass
 
             wbk.save(filename)
-            notification.notify(title='File Saved Successfully', message=f'Saved at : {filename}',
-                                timeout=5)
+            if filename.split('.')[0]:notification.notify(title='File Saved Successfully', message=f'Saved at : {filename}',timeout=5)
         else:
             self.err.setText('<font color="red">ERROR : </font>No Data In The Table To Export')
 
@@ -316,28 +323,134 @@ class R1(QtWidgets.QWidget):
                 self.verticalLayout_3.itemAt(i).widget().setParent(None)
             self.verticalLayout_3.addWidget(lbl)
 
-# class R2(QtWidgets.QWidget):
-#     def __init__(self, df = None):
-#         super().__init__()
-#         uic.loadUi(os.path.join(os.path.dirname(__file__), 'ui/r2.ui'), self)
-#         self.df = df
-#         # self.table.itemSelectionChanged.connect(self.table_select_event)
-#         self.table.clear()
-#         self.table.setColumnCount(len(self.table_header))
-#         self.table.resizeColumnsToContents()
-#         self.from_txt.setValidator(QIntValidator())
-#         self.to_txt.setValidator(QIntValidator())
-#         for i in range(len(self.table_header)):
-#             self.table.horizontalHeader().setSectionResizeMode(i, QHeaderView.Stretch)
-#
-#         self.set_dt()
-#         self.filter.clicked.connect(self.filtering)
-#         self.produce.clicked.connect(self.export_to_exel)
-#
-#     def set_dt(self):
-#         pass
-#         # self.table.setHorizontalHeaderLabels(self.table_header)
+class R2(QtWidgets.QWidget):
+    def __init__(self, df = None):
+        super().__init__()
+        uic.loadUi(os.path.join(os.path.dirname(__file__), 'ui/r2.ui'), self)
+        self.df = df
+        # self.table.itemSelectionChanged.connect(self.table_select_event)
+        self.table.clear()
 
+        self.table.resizeColumnsToContents()
+        self.from_txt.setValidator(QIntValidator())
+        self.to_txt.setValidator(QIntValidator())
+        for i in range(4):
+            self.table.horizontalHeader().setSectionResizeMode(i, QHeaderView.Stretch)
+
+        self.set_dt()
+        self.filter.clicked.connect(self.filtering)
+        # self.filter.clicked.connect(self.filtering)
+        self.produce.clicked.connect(self.export_to_exel)
+
+
+    def export_to_exel(self):
+        if self.table.rowCount():
+
+            filename = QtWidgets.QFileDialog.getSaveFileName(caption='Export', filter="Excel (*.xlsx *.xls)", directory= DESKTOP)[0]
+            if not QFileInfo(filename).suffix():
+                filename += '.xlsx'
+
+            wbk = xlwt.Workbook()
+            sheet = wbk.add_sheet("sheet", cell_overwrite_ok=True)
+            for i, v in enumerate(self.headers):
+                sheet.write(0, i, v)
+            for currentColumn in range(self.table.columnCount()):
+                for currentRow in range(self.table.rowCount()):
+                    try:
+                        teext = str(self.table.item(currentRow, currentColumn).text())
+                        sheet.write(currentRow + 1, currentColumn, teext)
+                    except AttributeError:
+                        pass
+
+            wbk.save(filename)
+            if filename.split('.')[0]:notification.notify(title='File Saved Successfully', message=f'Saved at : {filename}',timeout=5)
+        else:
+            self.err.setText('<font color="red">ERROR : </font>No Data In The Table To Export')
+
+    def set_dt(self, from_ = None, to = None):
+        G_years = list([i for i in self.df['Graduation Year']])
+        if from_ is None or from_ < min(G_years) or from_ > max(G_years):
+            from_ = min(G_years)
+        if to is None or to > max(G_years) or to < min(G_years):
+            to = max(G_years)
+        self.headers = []
+        self.rows =[]
+        self.dff = self.df[(self.df['Graduation Year'] >= from_) & (self.df['Graduation Year'] <= to)]
+
+        if self.comboBox.currentText() == 'College':
+            ll = list([i for i in  self.dff['Graduation Year'] if i])
+            self.rows =[ ['College', min(ll), int(sum(ll)/len(ll)), max(ll)]]
+            self.headers = ['Colleges', 'Min', 'Mean', 'Max']
+
+        else:
+            elements = [i for i in set(list(self.dff[self.comboBox.currentText()]))]
+            self.data = self.dff.groupby(self.comboBox.currentText())
+            self.headers = [self.comboBox.currentText(), 'Min', 'Mean', 'Max']
+            for elm in elements:
+                ll = [i for i in self.data.get_group(elm)['Graduation Year']]
+                self.rows.append([elm, min(ll), int(sum(ll)/len(ll)), max(ll)])
+        self.title.setText(f'min/mean/max of Graduation Year Grouping by {self.comboBox.currentText()}s from Graduation Year "{from_}" to "{to}"')
+        self.table.setHorizontalHeaderLabels(self.headers)
+        self.table.setColumnCount(len(self.headers))
+        [self.table.removeRow(0) for _ in range(self.table.rowCount())]
+        for r_n, r_d in enumerate(self.rows):
+            self.table.insertRow(r_n)
+            for c_n, d in enumerate(r_d):
+                self.table.setItem(r_n, c_n, QtWidgets.QTableWidgetItem(str(d)))
+
+        set0 = QtChart.QBarSet('Min')
+        set1 = QtChart.QBarSet('Mean')
+        set2 = QtChart.QBarSet('Max')
+
+        set0.append([i[1] for i in self.rows])
+        set1.append([i[2] for i in self.rows])
+        set2.append([i[3] for i in self.rows])
+
+        series = QtChart.QBarSeries()
+        series.append(set0)
+        series.append(set1)
+        series.append(set2)
+
+        chart = QtChart.QChart()
+        chart.addSeries(series)
+        chart.setTitle(' ')
+        chart.setAnimationOptions(QtChart.QChart.SeriesAnimations)
+
+        axisX = QtChart.QBarCategoryAxis()
+        # axisX.append(str(i) for i in range(1, len(data) + 1))
+        axisX.append(str(i[0]) for i in self.rows)
+        axisX.setLabelsAngle(90)
+        axisX.setTitleText(f'{self.comboBox.currentText()}s')
+        font = QtGui.QFont()
+        font.setPixelSize(5)
+        axisX.tickFont = font
+        all_v = []
+        for i in self.rows:
+            for x in i[1:]:
+                all_v.append(x)
+        axisY = QtChart.QValueAxis()
+        axisY.setRange(0, max(all_v) if all_v else 0)
+        axisY.setTitleText("Graduation Year")
+
+        chart.addAxis(axisX, Qt.AlignBottom)
+        chart.addAxis(axisY, Qt.AlignLeft)
+
+        chart.legend().setVisible(True)
+        chart.legend().setAlignment(Qt.AlignBottom)
+        chartView = QtChart.QChartView(chart)
+
+
+        for i in reversed(range(self.graph_layout.count())):
+            self.graph_layout.itemAt(i).widget().setParent(None)
+
+        self.graph_layout.addWidget(chartView)
+
+    def filtering(self):
+        if self.from_txt.text() and self.to_txt.text():
+            self.set_dt(int(self.from_txt.text()), int(self.to_txt.text()))
+        else:
+            # self.err.setText('<font color="red">ERROR : </font>you have to fill from -> to Graduation Year for filtering ')
+            self.set_dt()
 
 
 class Err(QtWidgets.QFrame):
