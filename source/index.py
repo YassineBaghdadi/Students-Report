@@ -2,6 +2,7 @@ import time
 from os.path import split
 
 from PyQt5 import QtWidgets, QtGui, QtCore, uic
+from PyQt5.QtCore import QFileInfo
 from PyQt5.QtWidgets import QLabel
 from PyQt5.QtChart import *
 from PyQt5.Qt import Qt
@@ -9,13 +10,16 @@ from PyQt5 import QtChart
 # from PyQt5.QtChart import *
 from PyQt5.QtGui import QPainter, QIntValidator, QPixmap
 
-import sys, os, random, threading
+import sys, os, random, threading, platform
 import pandas as pd
 import logging
-
+from plyer import notification
 from PyQt5.QtWidgets import QHeaderView, QTableWidgetItem
+from pandas.tests.io.excel.test_xlrd import xlwt
 
 
+
+DESKTOP = os.path.join(os.path.join(os.environ['USERPROFILE']), 'Desktop') if platform.system() == 'Windows' else os.path.join(os.path.join(os.path.expanduser('~')), 'Desktop')
 class Main(QtWidgets.QWidget):
     def __init__(self):
         super().__init__()
@@ -23,6 +27,8 @@ class Main(QtWidgets.QWidget):
         uic.loadUi(os.path.join(os.path.dirname(__file__), 'ui/home.ui'), self)
         self.browse.clicked.connect(self.get_path)
         self.paths = []
+        self.current_R = 0
+        self.current_F = ''
         self.proc.setEnabled(False)
         self.path_txt.currentTextChanged.connect(self.path_changed)
         self.loading = Loading('proc.gif')
@@ -35,14 +41,13 @@ class Main(QtWidgets.QWidget):
         self.r4_btn.installEventFilter(self)
         self.r5_btn.installEventFilter(self)
         self.r6_btn.installEventFilter(self)
-        self.current_R = 0
 
     def eventFilter(self, o, e):
         if e.type() == QtCore.QEvent.MouseButtonPress or e.type() == QtCore.QEvent.MouseButtonDblClick:
             if o is self.r1_btn and self.current_R != 1:
-                self.start_proc()
                 self.clicks_btns(self.r1_btn)
                 self.current_R = 1
+                self.contents.addWidget(self.r1)
 
             elif o is self.r2_btn and self.current_R != 2:
                 #todo load R2
@@ -76,12 +81,21 @@ class Main(QtWidgets.QWidget):
         self.contents.addWidget(wdget)
 
     def start_proc(self):
-
+        if self.path_txt.currentText() != self.current_F:
             self.proc.setEnabled(False)
+
             # loading = Loading('proc.gif')
-            self.clear_content()
+            # self.clear_content()
             # self.contents.addWidget(loading)
             self.df = pd.read_excel(self.path_txt.currentText())
+            cols = ['Student ID', 'Date of birth', 'Place of birth', 'Type of ID',
+                        'Place of issue', 'Department', 'Major', 'Graduation Year', 'Year',
+                        'Semester for graduation', 'GPA', 'Grade', 'Type of certificate']
+            if len(self.df.columns) != 13:
+                notification.notify(title='Error found while looading', message='make sure you are using the right file', timeout=7)
+                self.contents.addWidget(Loading('err.gif'))
+                return
+
             print(self.df)
 
             start_year = []
@@ -96,11 +110,12 @@ class Main(QtWidgets.QWidget):
             self.df['year_in_college'] = self.df['Graduation Year'] - self.df['start_year']
 
             self.r1 =R1(self.df)
-            self.clear_content()
             self.contents.addWidget(self.r1)
             self.frame_2.setEnabled(True)
             self.clicks_btns(self.r1_btn)
             self.current_R = 1
+            self.current_F = self.path_txt.currentText()
+            ########################################################### R2
 
 
 
@@ -113,6 +128,8 @@ class Main(QtWidgets.QWidget):
         self.r5_btn.setStyleSheet('QPushButton{background-color:white;}')
         self.r6_btn.setStyleSheet('QPushButton{background-color:white;}')
         btn.setStyleSheet('QPushButton{background-color:#e6ffe6;}')
+        self.clear_content()
+
 
 
 
@@ -134,7 +151,7 @@ class Main(QtWidgets.QWidget):
             self.path_label.setFixedWidth(38)
 
     def get_path(self):
-        self.file = QtWidgets.QFileDialog.getOpenFileName(caption='Load File', filter="Excel (*.xlsx *.xls)")[0]
+        self.file = QtWidgets.QFileDialog.getOpenFileName(caption='Load File', filter="Excel (*.xlsx *.xls)", directory=DESKTOP)[0]
         if self.file:
             self.proc.setEnabled(True)
             self.paths.insert(0, self.file)
@@ -166,6 +183,32 @@ class R1(QtWidgets.QWidget):
 
         self.set_dt()
         self.filter.clicked.connect(self.filtering)
+        self.produce.clicked.connect(self.export_to_exel)
+
+    def export_to_exel(self):
+        if self.table.rowCount():
+
+            filename = QtWidgets.QFileDialog.getSaveFileName(caption='Export', filter="Excel (*.xlsx *.xls)", directory= DESKTOP)[0]
+            if not QFileInfo(filename).suffix():
+                filename += '.xlsx'
+
+            wbk = xlwt.Workbook()
+            sheet = wbk.add_sheet("sheet", cell_overwrite_ok=True)
+            for i, v in enumerate(self.table_header):
+                sheet.write(0, i, v)
+            for currentColumn in range(self.table.columnCount()):
+                for currentRow in range(self.table.rowCount()):
+                    try:
+                        teext = str(self.table.item(currentRow, currentColumn).text())
+                        sheet.write(currentRow + 1, currentColumn, teext)
+                    except AttributeError:
+                        pass
+
+            wbk.save(filename)
+            notification.notify(title='File Saved Successfully', message=f'Saved at : {filename}',
+                                timeout=5)
+        else:
+            self.err.setText('<font color="red">ERROR : </font>No Data In The Table To Export')
 
     def filtering(self):
         if self.from_txt.text() and self.to_txt.text():
@@ -271,6 +314,29 @@ class R1(QtWidgets.QWidget):
             for i in reversed(range(self.verticalLayout_3.count())):
                 self.verticalLayout_3.itemAt(i).widget().setParent(None)
             self.verticalLayout_3.addWidget(lbl)
+
+class R2(QtWidgets.QWidget):
+    def __init__(self, df = None):
+        super().__init__()
+        uic.loadUi(os.path.join(os.path.dirname(__file__), 'ui/r2.ui'), self)
+        self.df = df
+        # self.table.itemSelectionChanged.connect(self.table_select_event)
+        self.table.clear()
+        self.table.setColumnCount(len(self.table_header))
+        self.table.resizeColumnsToContents()
+        self.from_txt.setValidator(QIntValidator())
+        self.to_txt.setValidator(QIntValidator())
+        for i in range(len(self.table_header)):
+            self.table.horizontalHeader().setSectionResizeMode(i, QHeaderView.Stretch)
+
+        self.set_dt()
+        self.filter.clicked.connect(self.filtering)
+        self.produce.clicked.connect(self.export_to_exel)
+
+    def set_dt(self):
+        # self.table.setHorizontalHeaderLabels(self.table_header)
+
+
 
 class Err(QtWidgets.QFrame):
     def __init__(self):

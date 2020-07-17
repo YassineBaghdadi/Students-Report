@@ -91,6 +91,11 @@
           <property name="editable">
            <bool>true</bool>
           </property>
+          <item>
+           <property name="text">
+            <string>Choose File ...</string>
+           </property>
+          </item>
          </widget>
         </item>
         <item>
@@ -203,6 +208,9 @@
               <width>0</width>
               <height>41</height>
              </size>
+            </property>
+            <property name="styleSheet">
+             <string notr="true"/>
             </property>
             <property name="text">
              <string>Report 1</string>
