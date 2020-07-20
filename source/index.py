@@ -8,7 +8,7 @@ from PyQt5.QtChart import *
 from PyQt5.Qt import Qt
 from PyQt5 import QtChart
 # from PyQt5.QtChart import *
-from PyQt5.QtGui import QPainter, QIntValidator, QPixmap
+from PyQt5.QtGui import QPainter, QIntValidator, QPixmap, QImage
 
 import sys, os, random, threading, platform
 import pandas as pd
@@ -16,8 +16,12 @@ import logging
 from plyer import notification
 from PyQt5.QtWidgets import QHeaderView, QTableWidgetItem
 from pandas.tests.io.excel.test_xlrd import xlwt
+import matplotlib
+import matplotlib.pyplot as plt
+import numpy as np
 
-
+from docx import Document #python-docx
+from docx.shared import Inches
 
 DESKTOP = os.path.join(os.path.join(os.environ['USERPROFILE']), 'Desktop') if platform.system() == 'Windows' else os.path.join(os.path.join(os.path.expanduser('~')), 'Desktop')
 
@@ -225,7 +229,7 @@ class R1(QtWidgets.QWidget):
         self.ar = ar
         # self.table.itemSelectionChanged.connect(self.table_select_event)
         self.table.clear()
-        self.table_header = ['التخصصات' if self.ar else 'Majors', 'سنتان' if self.ar else '2 Years', '3 سنوات' if self.ar else '3 Years',  '4 سنوات' if self.ar else '4 Years',  '5 سموات و أكثر' if self.ar else '5 Yrs or more']
+        self.table_header = ['التخصصات' if self.ar else 'Majors', 'أقل من سنتان' if self.ar else 'less then 2 Years', 'سنتان' if self.ar else '2 Years', '3 سنوات' if self.ar else '3 Years',  '4 سنوات' if self.ar else '4 Years',  '5 سموات و أكثر' if self.ar else '5 Yrs or more']
         self.table.setColumnCount(len(self.table_header))
         self.table.setHorizontalHeaderLabels(self.table_header)
         self.table.resizeColumnsToContents()
@@ -248,29 +252,145 @@ class R1(QtWidgets.QWidget):
 
 
     def export_to_exel(self):
+        # if self.table.rowCount():
+        #     filename = QtWidgets.QFileDialog.getSaveFileName(caption='إستخراج' if self.ar else 'Export', filter="Excel (*.xlsx *.xls)", directory= DESKTOP)[0]
+        #     if not QFileInfo(filename).suffix():
+        #         filename += '.xlsx'
+        #
+        #     wbk = xlwt.Workbook()
+        #     sheet = wbk.add_sheet("sheet", cell_overwrite_ok=True)
+        #     for i, v in enumerate(self.table_header):
+        #         sheet.write(0, i, v)
+        #     for currentColumn in range(self.table.columnCount()):
+        #         for currentRow in range(self.table.rowCount()):
+        #             try:
+        #                 teext = str(self.table.item(currentRow, currentColumn).text())
+        #                 sheet.write(currentRow + 1, currentColumn, teext)
+        #             except AttributeError:
+        #                 pass
+        #
+        #     wbk.save(filename)
+        #     if filename.split('.')[0]:notification.notify(title= 'تم حفظ الملف بنجاح' if self.ar else 'File Saved Successfully', message=f'Saved at : {filename}',timeout=5)
+        # else:
+        #     msg = '<font color="red">خطأ : </font>لا توجد تيانات للإستخراج' if self.ar else '<font color="red">ERROR : </font>No Data In The Table To Export'
+        #     self.err.setText()
+
+        # print(self.chartView.winId())
+        # # pos = self.graph_layout.pos()
+        # print(self.chartView.width())
+        # scr = self.grabWindow(self.chartView.winId(), 0, 0, self.chartView.width(), self.chartView.height())
+        # scr.save('tttt.png')
+        # print('done')
+        # d = Drawing(280, 250)
+        # bar = VerticalBarChart()
+        # bar.x = 50
+        # bar.y = 85
+        #
+        # print(data)
+        # bar.data = data
+        # bar.categoryAxis.categoryNames = lbls
+        # # bar.bars[0].fillColor = PCMYKColor(0, 100, 100, 40, alpha=85)
+        # # bar.bars[1].fillColor = PCMYKColor(23, 51, 0, 4, alpha=85)
+        # # bar.bars.fillColor = PCMYKColor(100, 0, 90, 50, alpha=85)
+        # d.add(bar, '')
+        # # d.save(formats=['pdf'], outDir='.', fnRoot='test')
+        # d.save('test.pdf')
+
+        #
+        # x = np.arange(len([i[0] for i in data]))  # the label locations
+        # width = 0.2  # the width of the bars
+        #
+        # fig, ax = plt.subplots()
+        # rects1 = ax.bar(x - width / 2, [i[1] for i in data], width, label='2')
+        # rects2 = ax.bar(x + width / 2, [i[2] for i in data], width, label='3')
+        # rects3 = ax.bar(x + width / 2, [i[3] for i in data], width, label='4')
+        # rects4 = ax.bar(x + width / 2, [i[4] for i in data], width, label='5')
+        #
+        # # Add some text for labels, title and custom x-axis tick labels, etc.
+        # ax.set_ylabel('Scores')
+        # ax.set_title('Scores by group and gender')
+        # ax.set_xticks(x)
+        # ax.set_xticklabels(lbls)
+        # ax.legend()
+        #
+        # def autolabel(rects):
+        #     """Attach a text label above each bar in *rects*, displaying its height."""
+        #     for rect in rects:
+        #         height = rect.get_height()
+        #         ax.annotate('{}'.format(height),
+        #                     xy=(rect.get_x() + rect.get_width() / 2, height),
+        #                     xytext=(0, 3),  # 3 points vertical offset
+        #                     textcoords="offset points",
+        #                     ha='center', va='bottom')
+        #
+        # autolabel(rects1)
+        # autolabel(rects2)
+        # autolabel(rects3)
+        # autolabel(rects4)
+        #
+        # fig.tight_layout()
+
+
+        data = []
+        for r in range(self.table.rowCount()):
+            rr = []
+            for c in range(self.table.columnCount()):
+                rr.append(self.table.item(r, c).text() if self.table.item(r, c).text() else 0)
+            data.append(rr)
+
+        import arabic_reshaper
+        from bidi.algorithm import get_display #python-bidi
+        plotdata = pd.DataFrame({
+            "Less than 2 years": [int(i[1]) for i in data],
+            "2 years": [int(i[2]) for i in data],
+            "3 years": [int(i[3]) for i in data],
+            "4 years": [int(i[4]) for i in data],
+            "5 years and more": [int(i[5]) for i in data]
+        },
+            index=[get_display(arabic_reshaper.reshape(i[0])) for i in data]
+        )
+
+        plotdata.plot(kind="bar", figsize=(12,7))
+        plt.title(self.title_.text())
+        # plt.xlabel("Family Member")
+        # plt.ylabel("Pies Consumed")
+        plt.xticks(rotation=45, horizontalalignment='right')
+
+
+
+        grapg_path = os.path.join(DESKTOP, 'graph.png')
+        plt.savefig(grapg_path)
+
+        # plt.show()
+        document = Document()
+
+        document.add_paragraph(self.title_.text(), style='Intense Quote')
+
+        document.add_picture(grapg_path,  width=Inches(7))
+        table = document.add_table(rows=1, cols=6)
+        hdr_cells = table.rows[0].cells
+        hdr_cells[0].text = " - "
+        hdr_cells[1].text = "Less than 2 years"
+        hdr_cells[2].text = "2 years"
+        hdr_cells[3].text = "3 years"
+        hdr_cells[4].text = "4 years"
+        hdr_cells[5].text = "5 years and more"
+
+        for i in data:
+            row_cells = table.add_row().cells
+            for c in range(6):
+                row_cells[c].text = str(i[c])
+
+
         if self.table.rowCount():
+            self.filename = QtWidgets.QFileDialog.getSaveFileName(caption='إستخراج' if self.ar else 'Export', filter="Word (*.doc *.docx)", directory= DESKTOP)[0]
+            if not QFileInfo(self.filename).suffix():
+                self.filename += '.docx'
 
-            filename = QtWidgets.QFileDialog.getSaveFileName(caption='إستخراج' if self.ar else 'Export', filter="Excel (*.xlsx *.xls)", directory= DESKTOP)[0]
-            if not QFileInfo(filename).suffix():
-                filename += '.xlsx'
-
-            wbk = xlwt.Workbook()
-            sheet = wbk.add_sheet("sheet", cell_overwrite_ok=True)
-            for i, v in enumerate(self.table_header):
-                sheet.write(0, i, v)
-            for currentColumn in range(self.table.columnCount()):
-                for currentRow in range(self.table.rowCount()):
-                    try:
-                        teext = str(self.table.item(currentRow, currentColumn).text())
-                        sheet.write(currentRow + 1, currentColumn, teext)
-                    except AttributeError:
-                        pass
-
-            wbk.save(filename)
-            if filename.split('.')[0]:notification.notify(title= 'تم حفظ الملف بنجاح' if self.ar else 'File Saved Successfully', message=f'Saved at : {filename}',timeout=5)
-        else:
-            msg = '<font color="red">خطأ : </font>لا توجد تيانات للإستخراج' if self.ar else '<font color="red">ERROR : </font>No Data In The Table To Export'
-            self.err.setText()
+        if self.filename:
+            document.save(self.filename)
+        print('done')
+        os.remove(grapg_path)
 
     def filtering(self):
         if self.from_txt.text() and self.to_txt.text():
@@ -292,14 +412,17 @@ class R1(QtWidgets.QWidget):
         if rows > 0:
             majors = [i for i in set(list(self.new_df['Major']))]
             gk = self.new_df.groupby('Major')
-            data = []
+            self.data = []
             for major in majors:
+                l2 = 0
                 _2y = 0
                 _3y = 0
                 _4y = 0
                 _5ym = 0
                 for yoc in gk.get_group(major)['year_in_college']:
-                    if yoc == 2:
+                    if yoc < 2:
+                        l2 += 1
+                    elif yoc == 2:
                         _2y += 1
                     elif yoc == 3:
                         _3y += 1
@@ -309,25 +432,28 @@ class R1(QtWidgets.QWidget):
                         _5ym += 1
 
                 # data.append({major : [_2y, _3y, _4y, _5ym]})
-                data.append([major, _2y, _3y, _4y, _5ym])
+                self.data.append([major, l2, _2y, _3y, _4y, _5ym])
             # [print(i) for i in data]
             [self.table.removeRow(0) for _ in range(self.table.rowCount())]
-            for r_n, r_d in enumerate(data):
+            for r_n, r_d in enumerate(self.data):
                 self.table.insertRow(r_n)
                 for c_n, d in enumerate(r_d):
                     self.table.setItem(r_n, c_n, QtWidgets.QTableWidgetItem(str(d)))
 
+            sett = QtChart.QBarSet('أقل من سنتان')
             set0 = QtChart.QBarSet('سنتان')
             set1 = QtChart.QBarSet('3 سنوات')
             set2 = QtChart.QBarSet('4 سنوات')
             set3 = QtChart.QBarSet('5 سموات و أكثر')
 
-            set0.append([i[1] for i in data])
-            set1.append([i[2] for i in data])
-            set2.append([i[3] for i in data])
-            set3.append([i[4] for i in data])
+            sett.append([i[1] for i in self.data])
+            set0.append([i[2] for i in self.data])
+            set1.append([i[3] for i in self.data])
+            set2.append([i[4] for i in self.data])
+            set3.append([i[5] for i in self.data])
 
             series = QtChart.QBarSeries()
+            series.append(sett)
             series.append(set0)
             series.append(set1)
             series.append(set2)
@@ -340,7 +466,7 @@ class R1(QtWidgets.QWidget):
 
             axisX = QtChart.QBarCategoryAxis()
             # axisX.append(str(i) for i in range(1, len(data) + 1))
-            axisX.append(str(i[0]) for i in data)
+            axisX.append(str(i[0]) for i in self.data)
             axisX.setLabelsAngle(90)
             axisX.setTitleText( 'التخصصات' if self.ar else "Majors")
             font = QtGui.QFont()
@@ -349,7 +475,7 @@ class R1(QtWidgets.QWidget):
 
 
             all_v = []
-            for i in data:
+            for i in self.data:
                 for x in i[1:]:
                     all_v.append(x)
             axisY = QtChart.QValueAxis()
@@ -361,7 +487,7 @@ class R1(QtWidgets.QWidget):
 
             chart.legend().setVisible(True)
             chart.legend().setAlignment(Qt.AlignBottom)
-            chartView = QtChart.QChartView(chart)
+            self.chartView = QtChart.QChartView(chart)
 
             for i in reversed(range(self.verticalLayout_3.count())):
                 self.verticalLayout_3.itemAt(i).widget().setParent(None)
@@ -370,7 +496,7 @@ class R1(QtWidgets.QWidget):
             for i in reversed(range(self.graph_layout.count())):
                 self.graph_layout.itemAt(i).widget().setParent(None)
 
-            self.graph_layout.addWidget(chartView)
+            self.graph_layout.addWidget(self.chartView)
         else:
             lbl = Err()
             for i in reversed(range(self.verticalLayout_3.count())):
@@ -410,26 +536,65 @@ class R2(QtWidgets.QWidget):
     def export_to_exel(self):
         if self.table.rowCount():
 
-            filename = QtWidgets.QFileDialog.getSaveFileName(caption= 'إستخراج' if self.ar else 'Export', filter="Excel (*.xlsx *.xls)", directory= DESKTOP)[0]
-            if not QFileInfo(filename).suffix():
-                filename += '.xlsx'
+            data = []
+            for r in range(self.table.rowCount()):
+                rr = []
+                for c in range(self.table.columnCount()):
+                    rr.append(self.table.item(r, c).text() if self.table.item(r, c).text() else 0)
+                data.append(rr)
 
-            wbk = xlwt.Workbook()
-            sheet = wbk.add_sheet("sheet", cell_overwrite_ok=True)
-            for i, v in enumerate(self.headers):
-                sheet.write(0, i, v)
-            for currentColumn in range(self.table.columnCount()):
-                for currentRow in range(self.table.rowCount()):
-                    try:
-                        teext = str(self.table.item(currentRow, currentColumn).text())
-                        sheet.write(currentRow + 1, currentColumn, teext)
-                    except AttributeError:
-                        pass
+            import arabic_reshaper
+            from bidi.algorithm import get_display  # python-bidi
 
-            wbk.save(filename)
-            if filename.split('.')[0]:notification.notify(title= 'تم حفظ الملف بنجاح' if self.ar else 'File Saved Successfully', message=f'Saved at : {filename}',timeout=5)
-        else:
-            self.err.setText('<font color="red">ERROR : </font>No Data In The Table To Export')
+            self.plotdata = None
+
+            self.plotdata = pd.DataFrame({
+                    "min": [int(i[1]) for i in data],
+                    "mean": [int(i[2]) for i in data],
+                    "max": [int(i[3]) for i in data]},
+                    index=[get_display(arabic_reshaper.reshape(i[0])) for i in data]
+                )
+
+
+            self.plotdata.plot(kind="bar", figsize=(12, 7))
+            plt.title(self.title.text())
+            # plt.xlabel("Family Member")
+            # plt.ylabel("Pies Consumed")
+            plt.xticks(rotation=45, horizontalalignment='right')
+
+            grapg_path = os.path.join(DESKTOP, 'graph.png')
+            plt.savefig(grapg_path)
+
+            # plt.show()
+            document = Document()
+
+            document.add_paragraph(self.title.text(), style='Intense Quote')
+
+            document.add_picture(grapg_path, width=Inches(7))
+            table = document.add_table(rows=1, cols=4)
+            hdr_cells = table.rows[0].cells
+            hdr_cells[0].text = " - "
+            hdr_cells[1].text = "min"
+            hdr_cells[2].text = "mean"
+            hdr_cells[3].text = "max"
+
+
+            for i in data:
+                row_cells = table.add_row().cells
+                for c in range(4):
+                    row_cells[c].text = str(i[c])
+
+            if self.table.rowCount():
+                self.filename = QtWidgets.QFileDialog.getSaveFileName(caption='إستخراج' if self.ar else 'Export',
+                                                                      filter="Word (*.doc *.docx)", directory=DESKTOP)[
+                    0]
+                if not QFileInfo(self.filename).suffix():
+                    self.filename += '.docx'
+
+            if self.filename:
+                document.save(self.filename)
+            print('done')
+            os.remove(grapg_path)
 
     def set_dt(self, from_ = None, to = None):
         G_years = list([i for i in self.df['Graduation Year']])
@@ -561,27 +726,63 @@ class R3(QtWidgets.QWidget):
 
     def export_to_exel(self):
         if self.table.rowCount():
+            data = []
+            for r in range(self.table.rowCount()):
+                rr = []
+                for c in range(self.table.columnCount()):
+                    rr.append(self.table.item(r, c).text() if self.table.item(r, c).text() else 0)
+                data.append(rr)
 
-            filename = QtWidgets.QFileDialog.getSaveFileName(caption='Export', filter="Excel (*.xlsx *.xls)", directory= DESKTOP)[0]
-            if not QFileInfo(filename).suffix():
-                filename += '.xlsx'
+            import arabic_reshaper
+            from bidi.algorithm import get_display  # python-bidi
 
-            wbk = xlwt.Workbook()
-            sheet = wbk.add_sheet("sheet", cell_overwrite_ok=True)
-            for i, v in enumerate(self.headers):
-                sheet.write(0, i, v)
-            for currentColumn in range(self.table.columnCount()):
-                for currentRow in range(self.table.rowCount()):
-                    try:
-                        teext = str(self.table.item(currentRow, currentColumn).text())
-                        sheet.write(currentRow + 1, currentColumn, teext)
-                    except AttributeError:
-                        pass
+            self.plotdata = None
 
-            wbk.save(filename)
-            if filename.split('.')[0]:notification.notify(title='File Saved Successfully', message=f'Saved at : {filename}',timeout=5)
-        else:
-            self.err.setText('<font color="red">ERROR : </font>No Data In The Table To Export')
+            self.plotdata = pd.DataFrame({
+                "min": [float(i[1]) for i in data],
+                "mean": [float(i[2]) for i in data],
+                "max": [float(i[3]) for i in data]},
+                index=[get_display(arabic_reshaper.reshape(i[0])) for i in data]
+            )
+
+            self.plotdata.plot(kind="bar", figsize=(12, 7))
+            plt.title(self.title.text())
+            # plt.xlabel("Family Member")
+            # plt.ylabel("Pies Consumed")
+            plt.xticks(rotation=45, horizontalalignment='right')
+
+            grapg_path = os.path.join(DESKTOP, 'graph.png')
+            plt.savefig(grapg_path)
+
+            # plt.show()
+            document = Document()
+
+            document.add_paragraph(self.title.text(), style='Intense Quote')
+
+            document.add_picture(grapg_path, width=Inches(7))
+            table = document.add_table(rows=1, cols=4)
+            hdr_cells = table.rows[0].cells
+            hdr_cells[0].text = " - "
+            hdr_cells[1].text = "min"
+            hdr_cells[2].text = "mean"
+            hdr_cells[3].text = "max"
+
+            for i in data:
+                row_cells = table.add_row().cells
+                for c in range(4):
+                    row_cells[c].text = str(i[c])
+
+            if self.table.rowCount():
+                self.filename = QtWidgets.QFileDialog.getSaveFileName(caption='إستخراج' if self.ar else 'Export',
+                                                                      filter="Word (*.doc *.docx)", directory=DESKTOP)[
+                    0]
+                if not QFileInfo(self.filename).suffix():
+                    self.filename += '.docx'
+
+            if self.filename:
+                document.save(self.filename)
+            print('done')
+            os.remove(grapg_path)
 
     def set_dt(self, from_ = None, to = None):
         G_years = list([i for i in self.df['Graduation Year']])
@@ -716,26 +917,63 @@ class R4(QtWidgets.QWidget):
     def export_to_exel(self):
         if self.table.rowCount():
 
-            filename = QtWidgets.QFileDialog.getSaveFileName(caption='Export', filter="Excel (*.xlsx *.xls)", directory= DESKTOP)[0]
-            if not QFileInfo(filename).suffix():
-                filename += '.xlsx'
+            data = []
+            for r in range(self.table.rowCount()):
+                rr = []
+                for c in range(self.table.columnCount()):
+                    rr.append(self.table.item(r, c).text() if self.table.item(r, c).text() else 0)
+                data.append(rr)
 
-            wbk = xlwt.Workbook()
-            sheet = wbk.add_sheet("sheet", cell_overwrite_ok=True)
-            for i, v in enumerate(self.headers):
-                sheet.write(0, i, v)
-            for currentColumn in range(self.table.columnCount()):
-                for currentRow in range(self.table.rowCount()):
-                    try:
-                        teext = str(self.table.item(currentRow, currentColumn).text())
-                        sheet.write(currentRow + 1, currentColumn, teext)
-                    except AttributeError:
-                        pass
+            import arabic_reshaper
+            from bidi.algorithm import get_display  # python-bidi
 
-            wbk.save(filename)
-            if filename.split('.')[0]:notification.notify(title='File Saved Successfully', message=f'Saved at : {filename}',timeout=5)
-        else:
-            self.err.setText('<font color="red">ERROR : </font>No Data In The Table To Export')
+            self.plotdata = None
+
+            self.plotdata = pd.DataFrame({
+                "min": [float(i[1]) for i in data],
+                "mean": [float(i[2]) for i in data],
+                "max": [float(i[3]) for i in data]},
+                index=[get_display(arabic_reshaper.reshape(i[0])) for i in data]
+            )
+
+            self.plotdata.plot(kind="bar", figsize=(12, 7))
+            plt.title(self.title.text())
+            # plt.xlabel("Family Member")
+            # plt.ylabel("Pies Consumed")
+            plt.xticks(rotation=45, horizontalalignment='right')
+
+            grapg_path = os.path.join(DESKTOP, 'graph.png')
+            plt.savefig(grapg_path)
+
+            # plt.show()
+            document = Document()
+
+            document.add_paragraph(self.title.text(), style='Intense Quote')
+
+            document.add_picture(grapg_path, width=Inches(7))
+            table = document.add_table(rows=1, cols=4)
+            hdr_cells = table.rows[0].cells
+            hdr_cells[0].text = " - "
+            hdr_cells[1].text = "min"
+            hdr_cells[2].text = "mean"
+            hdr_cells[3].text = "max"
+
+            for i in data:
+                row_cells = table.add_row().cells
+                for c in range(4):
+                    row_cells[c].text = str(i[c])
+
+            if self.table.rowCount():
+                self.filename = QtWidgets.QFileDialog.getSaveFileName(caption='إستخراج' if self.ar else 'Export',
+                                                                      filter="Word (*.doc *.docx)", directory=DESKTOP)[
+                    0]
+                if not QFileInfo(self.filename).suffix():
+                    self.filename += '.docx'
+
+            if self.filename:
+                document.save(self.filename)
+            print('done')
+            os.remove(grapg_path)
 
     def set_dt(self, from_ = None, to = None):
         G_years = list([i for i in self.df['Graduation Year']])
@@ -863,26 +1101,58 @@ class R5(QtWidgets.QWidget):
     def export_to_exel(self):
         if self.table.rowCount():
 
-            filename = QtWidgets.QFileDialog.getSaveFileName(caption='Export', filter="Excel (*.xlsx *.xls)", directory= DESKTOP)[0]
-            if not QFileInfo(filename).suffix():
-                filename += '.xlsx'
+            data = []
+            for r in range(self.table.rowCount()):
+                rr = []
+                for c in range(self.table.columnCount()):
+                    rr.append(self.table.item(r, c).text() if self.table.item(r, c).text() else 0)
+                data.append(rr)
 
-            wbk = xlwt.Workbook()
-            sheet = wbk.add_sheet("sheet", cell_overwrite_ok=True)
-            for i, v in enumerate(self.table_header):
-                sheet.write(0, i, v)
-            for currentColumn in range(self.table.columnCount()):
-                for currentRow in range(self.table.rowCount()):
-                    try:
-                        teext = str(self.table.item(currentRow, currentColumn).text())
-                        sheet.write(currentRow + 1, currentColumn, teext)
-                    except AttributeError:
-                        pass
+            import arabic_reshaper
+            from bidi.algorithm import get_display  # python-bidi
 
-            wbk.save(filename)
-            if filename.split('.')[0]:notification.notify(title='File Saved Successfully', message=f'Saved at : {filename}',timeout=5)
-        else:
-            self.err.setText('<font color="red">ERROR : </font>No Data In The Table To Export')
+            self.plotdata = None
+
+            self.plotdata = pd.DataFrame({ "Students number": [float(i[1]) for i in data]},
+                index=[get_display(arabic_reshaper.reshape(i[0])) for i in data]
+            )
+
+            self.plotdata.plot(kind="bar", figsize=(12, 7))
+            plt.title(self.title_.text())
+            # plt.xlabel("Family Member")
+            # plt.ylabel("Pies Consumed")
+            plt.xticks(rotation=45, horizontalalignment='right')
+
+            grapg_path = os.path.join(DESKTOP, 'graph.png')
+            plt.savefig(grapg_path)
+
+            # plt.show()
+            document = Document()
+
+            document.add_paragraph(self.title_.text(), style='Intense Quote')
+
+            document.add_picture(grapg_path, width=Inches(7))
+            table = document.add_table(rows=1, cols=2)
+            hdr_cells = table.rows[0].cells
+            hdr_cells[0].text = " Native/non-Native "
+            hdr_cells[1].text = "Students number"
+
+            for i in data:
+                row_cells = table.add_row().cells
+                for c in range(2):
+                    row_cells[c].text = str(i[c])
+
+            if self.table.rowCount():
+                self.filename = QtWidgets.QFileDialog.getSaveFileName(caption='إستخراج' if self.ar else 'Export',
+                                                                      filter="Word (*.doc *.docx)", directory=DESKTOP)[
+                    0]
+                if not QFileInfo(self.filename).suffix():
+                    self.filename += '.docx'
+
+            if self.filename:
+                document.save(self.filename)
+            print('done')
+            os.remove(grapg_path)
 
     def filtering(self):
         if self.from_txt.text() and self.to_txt.text():
@@ -1227,26 +1497,70 @@ class R6(QtWidgets.QWidget):
     def export_to_exel(self):
         if self.table.rowCount():
 
-            filename = QtWidgets.QFileDialog.getSaveFileName(caption='Export', filter="Excel (*.xlsx *.xls)", directory= DESKTOP)[0]
-            if not QFileInfo(filename).suffix():
-                filename += '.xlsx'
+            data = []
 
-            wbk = xlwt.Workbook()
-            sheet = wbk.add_sheet("sheet", cell_overwrite_ok=True)
-            for i, v in enumerate(self.table_header):
-                sheet.write(0, i, v)
-            for currentColumn in range(self.table.columnCount()):
-                for currentRow in range(self.table.rowCount()):
-                    try:
-                        teext = str(self.table.item(currentRow, currentColumn).text())
-                        sheet.write(currentRow + 1, currentColumn, teext)
-                    except AttributeError:
-                        pass
+            for r in range(self.table.rowCount()):
+                rr = []
+                for c in range(self.table.columnCount()):
+                    rr.append(self.table.item(r, c).text() if self.table.item(r, c).text() else 0)
+                data.append(rr)
 
-            wbk.save(filename)
-            if filename.split('.')[0]:notification.notify(title='File Saved Successfully', message=f'Saved at : {filename}',timeout=5)
-        else:
-            self.err.setText('<font color="red">ERROR : </font>No Data In The Table To Export')
+            import arabic_reshaper
+            from bidi.algorithm import get_display  # python-bidi
+
+            self.plotdata = None
+            if self.checkBox.isChecked():
+                self.plotdata = pd.DataFrame({
+                    "min": [float(i[1]) for i in data],
+                    "mean": [float(i[2]) for i in data],
+                    "max": [float(i[3]) for i in data]},
+                    index=[get_display(arabic_reshaper.reshape(i[0])) for i in data]
+                )
+            else:
+                self.plotdata = pd.DataFrame({
+                    "Students number": [float(i[1]) for i in data]},
+                    index=[get_display(arabic_reshaper.reshape(i[0])) for i in data]
+                )
+
+            self.plotdata.plot(kind="bar", figsize=(12, 7))
+            plt.title(self.title_.text())
+            # plt.xlabel("Family Member")
+            # plt.ylabel("Pies Consumed")
+            plt.xticks(rotation=45, horizontalalignment='right')
+
+            grapg_path = os.path.join(DESKTOP, 'graph.png')
+            plt.savefig(grapg_path)
+
+            # plt.show()
+            document = Document()
+
+            document.add_paragraph(self.title_.text(), style='Intense Quote')
+
+            document.add_picture(grapg_path, width=Inches(7))
+            table = document.add_table(rows=1, cols=4 if self.checkBox.isChecked() else 2)
+            hdr_cells = table.rows[0].cells
+            hdr_cells[0].text = "Native/non-Native"
+            hdr_cells[1].text = "min" if self.checkBox.isChecked() else "Students numbers"
+            if self.checkBox.isChecked():
+                hdr_cells[2].text = "mean"
+                hdr_cells[3].text = "max"
+
+            for i in data:
+                row_cells = table.add_row().cells
+                for c in range(4 if self.checkBox.isChecked() else 2):
+                    row_cells[c].text = str(i[c])
+
+            if self.table.rowCount():
+                self.filename = QtWidgets.QFileDialog.getSaveFileName(caption='إستخراج' if self.ar else 'Export',
+                                                                      filter="Word (*.doc *.docx)", directory=DESKTOP)[
+                    0]
+                if not QFileInfo(self.filename).suffix():
+                    self.filename += '.docx'
+
+            if self.filename:
+                document.save(self.filename)
+            print('done')
+            os.remove(grapg_path)
 
     def filtering(self):
 
