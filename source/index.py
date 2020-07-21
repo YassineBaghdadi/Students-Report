@@ -51,6 +51,68 @@ class Splash(QtWidgets.QWidget):
                 self.close()
         return super(Splash, self).eventFilter(s, e)
 
+def tt(x):
+    if x.strip() == 'التقنية الكهربائية' or x.strip() ==  'تقنية كهربائية':
+        return 'Electrical Technology'
+    elif x.strip() == 'التقنية الميكانيكية' or x.strip() == 'تقنية ميكانيكية':
+        return 'Mechanical Technology'
+    elif x.strip() == 'تقنية الحاسب الآلي':
+        return 'Computer and Information Technology'
+    elif x.strip() == 'التقنية الإدارية' or x.strip() == 'تقنية إدارية':
+        return 'Management Technology'
+    elif x.strip() == 'التقنية الإلكترونية' or x.strip() == 'تقنية إلكترونية':
+        return 'Electronic Technology'
+    elif x.strip() == 'التقنية المدنية و المعمارية'.strip() or x.strip() == 'التقنية المدنية' or x.strip() == 'التقنية المعمارية' or x.strip() == 'تقنية مدنية و معمارية' or x.strip() == 'تقنية مدنية' or x.strip() == 'تقنية معمارية' :
+        return 'Construction Technology'
+    elif x.strip() == 'التقنية الكيميائية' or x.strip() == 'تقنية كيميائية':
+        return 'Chemical Technology'
+    elif x.strip() == 'تقنية الغذاء و البيئة'.strip() or x.strip() == 'التقنية الغذائية و البيئة' or x.strip() == 'التقنية البيئية' or x.strip() == 'تقنية البيئة':
+        return 'Food and Environment Technology'
+    elif x.strip() == 'آلات ومعدات كهربائية' or x.strip() == 'آلات كهربائية' or x.strip() == 'معدات كهربائية' or x.strip() == 'المعدات الكهربائية':
+        return "Electrical Machines and Equipment\'s"
+    elif x.strip() == 'قوى كهربائية' or x.strip() == 'القوى الكهربائية':
+        return 'Electrical Power'
+    elif x.strip() == 'كهربائي خطوط أرضية' or x.strip() == 'الخطوط الأرضية':
+        return 'Electric ground lines'
+    elif x.strip() == 'كهربائي توزيع':
+        return 'Electrician distribute'
+    elif x.strip() == 'كهربائي خطوط هوائية' or x.strip() == 'الخطوط الهوائية':
+        return 'Electric overhead lines'
+    elif x.strip() == 'إنتاج ميكانيكي' or x.strip() == 'الإنتاج الميكانيكي':
+        return 'Mechanical Production'
+    elif x.strip() == 'تبريد وتكييف' or x.strip() == 'التبريد و التكييف'.strip():
+        return 'Refrigeration and Air Conditioning'
+    elif x.strip() == 'ميكانيكا السيارات':
+        return 'Automotive Mechanics'
+    elif x.strip() == 'دعم فني' or x.strip() == 'الدعم الفني':
+        return 'Computer Technical Support'
+    elif x.strip() == 'إدارة مكتبية' or x.strip() == 'الإدارة المكتبية':
+        return 'Office Management'
+    elif x.strip() == 'محاسبة' or x.strip() == 'المحاسبة':
+        return 'Accounting'
+    elif x.strip() == 'تسويق' or x.strip() == 'التسويق':
+        return 'Marketing'
+    elif x.strip() == 'إلكترونيات صناعية' or x.strip() == 'الإلكترونيات الصناعية':
+        return 'Industrial Electronics and Control'
+    elif x.strip() == 'أجهزة طبية' or x.strip() == 'الأجهزة الطبية':
+        return 'Biomedical Technology'
+    elif x.strip() == 'الانشاءات المعمارية' or x.strip() == 'انشاءات معمارية' or x.strip() == 'إنشاءات معمارية':
+        return 'Architectural construction'
+    elif x.strip() == 'الانشاءات المدنية' or x.strip() == 'انشاءات مدنية'or x.strip() == 'إنشاءات مدنية':
+        return 'Civilization Construction'
+    elif x.strip() == 'تقنية المساحة':
+        return 'Surveying'
+    elif x.strip() == 'إنتاج كيميائي' or x.strip() == 'الإنتاج الكيميائي':
+        return 'Chemical Production'
+    elif x.strip() == 'مختبرات كيميائية' or x.strip() == 'المختبرات الكيميائية':
+        return 'Chemical laboratories'
+    elif x.strip() == 'سلامة الأغذية' or x.strip() == 'السلامة الغذاية':
+        return 'Food Safety'
+    elif x.strip() == 'حماية البيئة' or x.strip() == 'الحماية البيئية' :
+        return 'Environmental Protection'
+    else:
+        return x
+
 
 # todo############################################### Main window #######################################################
 class Main(QtWidgets.QWidget):
@@ -434,7 +496,10 @@ class R1(QtWidgets.QWidget):
                         _5ym += 1
 
                 # data.append({major : [_2y, _3y, _4y, _5ym]})
-                self.data.append([major, l2, _2y, _3y, _4y, _5ym])
+                mm = major
+                if not self.ar:
+                    mm = tt(major)
+                self.data.append([mm, l2, _2y, _3y, _4y, _5ym])
             # [print(i) for i in data]
             [self.table.removeRow(0) for _ in range(self.table.rowCount())]
             for r_n, r_d in enumerate(self.data):
@@ -630,7 +695,10 @@ class R2(QtWidgets.QWidget):
                             'المتوسط' if self.ar else 'Mean', 'على الأكثر' if self.ar else 'Max']
             for elm in elements:
                 ll = [i for i in self.data.get_group(elm)['Graduation Year']]
-                self.rows.append([elm, min(ll), int(sum(ll) / len(ll)), max(ll)])
+                mm = elm
+                if not self.ar:
+                    mm = tt(elm)
+                self.rows.append([mm, min(ll), int(sum(ll) / len(ll)), max(ll)])
         msg = 'تصنيف عدد السنوات في الكلية' if self.ar else f'min/mean/max of Graduation Year Grouping by {self.comboBox.currentText()}s from Graduation Year "{from_}" to "{to}"'
         self.title.setText(f'{msg}')
         self.table.setHorizontalHeaderLabels(self.headers)
@@ -829,14 +897,17 @@ class R3(QtWidgets.QWidget):
                     key = 'Department'
             elements = [i for i in set(list(self.dff[key]))]
             self.data = self.dff.groupby(key)
+
             self.headers = [self.comboBox.currentText(), 'على الأقل' if self.ar else 'Min',
                             'المتوسط' if self.ar else 'Mean', 'على الأكثر' if self.ar else 'Max']
             for elm in elements:
                 l = [i for i in self.data.get_group(elm)['age']]
                 ll = pd.Series(data=l)
                 ll.dropna(inplace=True)
-
-                self.rows.append([elm, round(min(ll), 1), round(sum(ll) / len(ll), 1), round(max(ll), 1)])
+                mm = elm
+                if not self.ar:
+                    mm = tt(elm)
+                self.rows.append([mm, round(min(ll), 1), round(sum(ll) / len(ll), 1), round(max(ll), 1)])
         msg = 'تصنيف أعمار الطلبة' if self.ar else f'min/mean/max of Age Grouping by {self.comboBox.currentText()}s from Graduation Year "{from_}" to "{to}"'
         self.title.setText(msg)
         self.table.setHorizontalHeaderLabels(self.headers)
@@ -1035,7 +1106,10 @@ class R4(QtWidgets.QWidget):
                 l = [i for i in self.data.get_group(elm)['GPA']]
                 ll = pd.Series(data=l)
                 ll.dropna(inplace=True)
-                self.rows.append([elm, round(min(ll), 1), round(sum(ll) / len(ll), 1), round(max(ll), 1)])
+                mm = elm
+                if not self.ar:
+                    mm = tt(elm)
+                self.rows.append([mm, round(min(ll), 1), round(sum(ll) / len(ll), 1), round(max(ll), 1)])
         ttl = "تصنيف الحد الأدنى / المتوسط ​​/ الحد الأقصى لمتوسط ​​الدرجة حسب سنوات التخرج" if self.ar else f'min/mean/max of GPA Grouping by {self.comboBox.currentText()}s from Graduation Year "{from_}" to "{to}"'
         self.title.setText(ttl)
         self.table.setHorizontalHeaderLabels(self.headers)
@@ -1638,6 +1712,7 @@ class R6(QtWidgets.QWidget):
                     if self.ar:
                         if re == 'native' : u = "أصلي"
                         else : u = "أجنبي"
+
                     self.data.append([u, min(ll), round(sum(ll) / len(ll), 1), max(ll)])
                 self.table_header = ["أصلي/أجنبي" if self.ar else 'Native/non-native', "على الأقل" if self.ar else 'min', "المتوسط" if self.ar else 'mean', "على الأكثر" if self.ar else 'max']
             else:
